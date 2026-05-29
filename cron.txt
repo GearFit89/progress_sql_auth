@@ -1,0 +1,43 @@
+┌────────────── minute (0 - 59)
+│ ┌──────────── hour (0 - 23)
+│ │ ┌────────── day of month (1 - 31)
+│ │ │ ┌──────── month (1 - 12)
+│ │ │ │ ┌────── day of week (0 - 6) (0 is Sunday)
+│ │ │ │ │
+* * * * *
+
+Common Special Characters
+* (Asterisk): "Every" value (e.g., every minute).
+
+, (Comma): A list of values (e.g., 1,3,5 in the hour field means 1 AM, 3 AM, and 5 AM).
+
+- (Hyphen): A range of values (e.g., 1-5 in the day field means Monday through Friday).
+
+/ (Slash): Increments of a value (e.g., */10 means every 10).
+
+Common Examples
+0 0 * * * — Runs daily at midnight.
+
+30 15 * * 1-5 — Runs at 3:30 PM, Monday through Friday.
+
+0 */2 * * * — Runs every 2 hours (at the start of the hour).
+
+0 0 1 1 * — Runs once a year (January 1st at midnight).
+
+Professional Code Advice: JavaScript (Node.js)
+When implementing Cron jobs in JavaScript (typically using the node-cron or cron packages):
+
+Validation: Use a library like cron-validator if you are allowing users to input their own cron strings to prevent application crashes from malformed strings.
+
+Timezones: By default, cron jobs usually run in the system time of the server. In node-cron, you can specify a timezone as a second argument to ensure schedules stay consistent regardless of where the server is hosted.
+
+Overlapping Jobs: If your task (e.g., a Redis Scan) takes 6 minutes to finish but your cron runs every 5 minutes, you will have two instances of the script running at once. Use a Redis Lock or a simple "isProcessing" flag to prevent overlaps.
+
+Logging: Always log the start and completion of a cron job. Since these run in the background, without logs, it is very difficult to tell if a job failed or simply never triggered.
+
+
+syntax import cron from 'node-cron'
+ cron.schedule(string, callback, {schedule:true, timezone:"America/Indiana/Indianapolis"})
+
+
+ 
