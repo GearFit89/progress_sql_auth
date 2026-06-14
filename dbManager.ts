@@ -9,6 +9,8 @@ export class DataBaseError extends Error {
         this.name = "DataBaseError";
     }
 }
+
+    
 export class DbManager extends EventEmitter {
     private db:Pool;
     
@@ -112,8 +114,13 @@ export class DbManager extends EventEmitter {
 
         `
         const result = await this.db.query(query, values);
-       return delPassHash ? this.delPassHash( result?.rows || []): result?.rows || [];
-    } catch(e) {
+       const resultData = delPassHash ? this.delPassHash( result?.rows || []): result?.rows || [];
+        if(!result || result?.rows?.length === 0){
+            this.handleDataError(query, new Error("No data found"))
+            
+        }
+            return resultData;
+        } catch(e) {
         this.emit("error", e);
         return [];
     }
@@ -160,6 +167,10 @@ export class DbManager extends EventEmitter {
     public cacSqlWhere(arr: any[], intiNumber: number = 1): string {
         return arr.map((item, i) => `${item} = $${i + intiNumber}`).join(', ')
 
+    }
+    protected handleDataError(query : string, e : Error){
+      this.emit("no-data", query);
+      this.emit("error", e);
     }
 
 }
