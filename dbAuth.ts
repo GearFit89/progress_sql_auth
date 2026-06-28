@@ -271,7 +271,9 @@ const data:AuthColumns = checkAuthData[0] || {};
 }
     const  userId:string = randomUUID();
     
-    const passHash:string = await hash(accountData.raw_password, {secret:ENV.SECRET_PASSWORD_KEY});
+   const passHash: string = await hash(accountData.raw_password, {
+  secret: Buffer.from(ENV.SECRET_PASSWORD_KEY, 'utf-8')
+});
     const authData:AuthColumns = {
         user_id:userId,
         username:accountData.username,
